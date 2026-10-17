@@ -13,12 +13,13 @@
   h2 { font-size: 20px; margin-top: 32px; }
   .updated { color: #666; font-size: 14px; margin-bottom: 32px; }
   a { color: #c2461d; }
+  code { background: #f3f3f3; padding: 1px 4px; border-radius: 3px; font-size: 90%; }
 </style>
 </head>
 <body>
 
 <h1>Privacy Policy — PolyPal</h1>
-<p class="updated">Last updated: 2026-04-25</p>
+<p class="updated">Last updated: 2026-10-17 (v1.3.0)</p>
 
 <p>
   This policy describes what data PolyPal ("the app") collects, stores,
@@ -29,31 +30,108 @@
 </p>
 
 <h2>What the app collects</h2>
-<p>None. PolyPal collects zero data from the user.</p>
+<p>Anonymous product-analytics events sent to <strong>PostHog</strong>
+(US region). We use these to understand how the app is used in aggregate
+and to improve it. Events are kid-safe: event properties are enum strings
+or numbers only. We do NOT collect:</p>
+<ul>
+  <li>names, email, phone number, address, or any other contact info</li>
+  <li>location — PostHog GeoIP enrichment is explicitly disabled
+      (<code>$geoip_disable=true</code> on every event)</li>
+  <li>device model, device name, or any other hardware identifier</li>
+  <li>code the kid writes, lesson answers, prompts to the AI, or AI responses</li>
+  <li>IDFA / advertising identifiers (none requested)</li>
+  <li>any content from third-party apps</li>
+</ul>
+<p>Each install is identified by a random UUID stored in iOS UserDefaults
+(<code>portfolio.analytics.install_id</code>). That UUID is reset when the
+app is deleted and reinstalled.</p>
+
+<h2>Events we send</h2>
+<p>Lifecycle (install, session.start, session.end, retention.day_n),
+onboarding (<code>onboarding.complete</code> with age band / goal / daily
+goal enums), learning (<code>lesson.start</code>, <code>step.submit</code>
+with pass/attempt counts, <code>hint.used</code>, <code>streak.*</code>,
+<code>daily_limit.hit</code>, <code>ai.unavailable</code>, parental-gate
+pass/fail counts), monetization (<code>paywall.view</code>,
+<code>paywall.purchase_result</code>, <code>restore.result</code>),
+and errors (<code>error.shown</code> with enum codes). Full event-property
+contract is in the app source at
+<code>PolyPal/Core/Analytics/LearningAnalytics.swift</code>.</p>
 
 <h2>What the app stores locally</h2>
-<p>Lesson completion IDs (strings, e.g. 'hello', 'variables') stored in iOS UserDefaults under the key 'pypal.completedLessonIDs.v1'. No personal data, no identifiers.</p>
+<ul>
+  <li>Lesson/step completion IDs (strings, e.g. <code>'hello#2'</code>)
+      stored in iOS UserDefaults
+      (<code>pypal.completedLessonIDs.v2</code>,
+      <code>pypal.passedStepIDs.v2</code>).</li>
+  <li>XP, streak length, freezes, daily checked-step count — all integers.</li>
+  <li>Onboarding answers (age band, goal, daily goal) stored as short
+      enum strings.</li>
+  <li>Certificate first name — only if a parent entered one behind the
+      parental gate. Never transmitted.</li>
+  <li>Analytics install_id and session index described above.</li>
+</ul>
+<p>No personally identifying information is stored or transmitted.</p>
 
-<h2>What the app transmits</h2>
-<p>None. App is fully offline. No telemetry, no analytics, no third-party SDKs that transmit data.</p>
-
-<h2>Third-party services</h2>
-<p>No third-party SDKs. PolyPal links only Apple frameworks: SwiftUI, UIKit, Foundation, FoundationModels.</p>
+<h2>The on-device AI tutor ("Ask PolyPal")</h2>
+<p>Unit 6 lessons and the optional "Ask PolyPal" hint button use Apple's
+on-device Foundation Models. Every prompt, every response, and the full
+conversation history stay on your device. Nothing is transmitted to
+Apple, to us, or to anyone else. We log a single
+<code>hint.used</code> event (level and source enum only) when a kid
+reveals a hint — never the content.</p>
 
 <h2>Permissions we request</h2>
-<p>None. PolyPal does not request any iOS permissions.</p>
+<ul>
+  <li><strong>Notifications</strong> — only after a parent passes the
+      parental gate inside Settings → Reminders, and only to deliver the
+      optional daily practice reminder. Off by default.</li>
+</ul>
+<p>No camera, no microphone, no location, no contacts, no motion.</p>
+
+<h2>Payments and the parental gate</h2>
+<p>Subscriptions are purchased through Apple's In-App Purchase. Apple handles
+the transaction; we never see your Apple ID or payment details. Every purchase
+sheet, Restore flow, external link (Terms, Privacy, support), notification
+prompt, certificate share, and reminder toggle is first gated by a short
+"Ask a grown-up" math question so an accidental kid tap doesn't reach the
+underlying action.</p>
+
+<h2>Ads and cross-app tracking</h2>
+<p>None. PolyPal shows no ads and does not use IDFA / App Tracking
+Transparency. We do not track users across apps or websites.</p>
+
+<h2>Third-party services</h2>
+<ul>
+  <li><strong>PostHog</strong> — anonymous product analytics as described
+      above. US region. GeoIP enrichment disabled. Device auto-props stripped
+      before every event is sent.</li>
+  <li><strong>Apple</strong> — StoreKit (payments), FoundationModels (local
+      AI), standard iOS frameworks (SwiftUI, UIKit, Foundation,
+      UserNotifications).</li>
+</ul>
 
 <h2>Your controls</h2>
 <ul>
-  <li>Revoke any permission in iOS Settings → PolyPal at any time.</li>
-  <li>Uninstall the app to remove all locally-stored data.</li>
-  Not applicable — PolyPal has no accounts. Settings → Reset Progress clears the locally-stored UserDefaults completion list.
-  <li>Contact us at <a href="mailto:support@medbillresolve.com">support@medbillresolve.com</a>
+  <li>Settings → Opt out of analytics stops all PostHog events at the SDK level.</li>
+  <li>Revoke notification permission in iOS Settings → PolyPal at any time.</li>
+  <li>Uninstall the app to remove all locally-stored data, including the
+      random install_id.</li>
+  <li>Settings → Reset Progress clears the locally-stored v2 completion
+      and XP/streak data without uninstalling.</li>
+  <li>Contact us at
+      <a href="mailto:support@medbillresolve.com">support@medbillresolve.com</a>
       to request any data we hold or to ask a question about this policy.</li>
 </ul>
 
 <h2>Children</h2>
-<p>PolyPal targets ages 8–14. The app contains no UGC, no chat with other users, no advertising, no third-party SDKs, no data collection. The on-device AI is wrapped with age-appropriate system instructions on top of Apple's own guardrails.</p>
+<p>PolyPal targets ages 8–14. The app contains no user-generated content
+visible to other users, no chat with other users, no social features,
+no leaderboards, no advertising, no in-app purchases of consumables or
+tokens. The on-device AI is wrapped with age-appropriate system
+instructions on top of Apple's own guardrails and sends no data off the
+device.</p>
 
 <h2>Changes</h2>
 <p>
