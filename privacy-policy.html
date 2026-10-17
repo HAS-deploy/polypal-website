@@ -19,7 +19,7 @@
 <body>
 
 <h1>Privacy Policy — PolyPal</h1>
-<p class="updated">Last updated: 2026-10-17 (v1.3.0)</p>
+<p class="updated">Last updated: 2026-10-17 (v1.3.0, rev 2)</p>
 
 <p>
   This policy describes what data PolyPal ("the app") collects, stores,
@@ -58,6 +58,16 @@ pass/fail counts), monetization (<code>paywall.view</code>,
 and errors (<code>error.shown</code> with enum codes). Full event-property
 contract is in the app source at
 <code>PolyPal/Core/Analytics/LearningAnalytics.swift</code>.</p>
+
+<h2>Crash diagnostics (Apple MetricKit)</h2>
+<p>PolyPal uses Apple's MetricKit framework. When iOS reports that the app
+crashed in a previous session, PolyPal sends one anonymous
+<code>app.crash_previous_session</code> event to PostHog containing only a
+short technical crash signature (exception type/code, signal, and the
+binary name + code offset of the top stack frame) and the app version.
+It contains no names, no code the kid wrote, no lesson content, and no
+device identifiers. MetricKit's daily performance metrics are received
+on-device but are not transmitted.</p>
 
 <h2>What the app stores locally</h2>
 <ul>
@@ -108,21 +118,21 @@ Transparency. We do not track users across apps or websites.</p>
       above. US region. GeoIP enrichment disabled. Device auto-props stripped
       before every event is sent.</li>
   <li><strong>Apple</strong> — StoreKit (payments), FoundationModels (local
-      AI), standard iOS frameworks (SwiftUI, UIKit, Foundation,
-      UserNotifications).</li>
+      AI), MetricKit (crash diagnostics, described above), standard iOS
+      frameworks (SwiftUI, UIKit, Foundation, UserNotifications).</li>
 </ul>
 
 <h2>Your controls</h2>
 <ul>
-  <li>Settings → Opt out of analytics stops all PostHog events at the SDK level.</li>
+  <li>Analytics are anonymous: events are tied only to the random install_id
+      above, never to a name, email, or account.</li>
   <li>Revoke notification permission in iOS Settings → PolyPal at any time.</li>
   <li>Uninstall the app to remove all locally-stored data, including the
       random install_id.</li>
-  <li>Settings → Reset Progress clears the locally-stored v2 completion
-      and XP/streak data without uninstalling.</li>
   <li>Contact us at
       <a href="mailto:support@medbillresolve.com">support@medbillresolve.com</a>
-      to request any data we hold or to ask a question about this policy.</li>
+      to request deletion of analytics data associated with your install, to
+      request any data we hold, or to ask a question about this policy.</li>
 </ul>
 
 <h2>Children</h2>
@@ -135,10 +145,8 @@ device.</p>
 
 <h2>Changes</h2>
 <p>
-  We'll update this page when the data we collect changes. The "Last
-  updated" date at the top reflects the most recent change. Material changes
-  (new data types, new third-party services) will also prompt an in-app
-  notice on next launch.
+  Changes to this policy are posted on this page with a new "Last
+  updated" date at the top.
 </p>
 
 <h2>Contact</h2>
